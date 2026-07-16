@@ -6,7 +6,7 @@
 功能：
   1. 自动采集竞品动态（GitHub Releases + Hacker News）
   2. 用 AI 进行摘要和分类
-  3. 生成结构化 Markdown 日报
+  3. 生成结构化 Markdown 日报 + HTML 可视化报告
   4. 自动推送到 Slack / 飞书 / 企业微信 / Telegram / 邮件
 
 使用方法：
@@ -46,7 +46,6 @@ logging.basicConfig(
     datefmt="%H:%M:%S"
 )
 logger = logging.getLogger(__name__)
-
 
 # ============================================================
 # 第一部分：配置加载
@@ -96,7 +95,6 @@ class Config:
     @property
     def categories(self):
         return self.get("categories", default={})
-
 
 # ============================================================
 # 第二部分：数据采集器
@@ -277,7 +275,6 @@ class Collector:
     def _hash(text):
         return hashlib.md5(text.encode("utf-8")).hexdigest()
 
-
 # ============================================================
 # 第三部分：AI 处理器
 # ============================================================
@@ -414,7 +411,6 @@ class AIProcessor:
             "competitor": data.get("competitor", ""),
         }
 
-
 # ============================================================
 # 第四部分：报告生成器
 # ============================================================
@@ -521,21 +517,297 @@ class Reporter:
 
         return text.strip()
 
-    def save_report(self, markdown_content):
-        """保存报告到本地文件"""
+    def generate_html(self, items):
+        """生成漂亮的 HTML 可视化报告"""
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        time_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+        prefix = self.config.get("report", "title_prefix", default="竞品情报日报")
+
+        # 按类别分组
+        groups = {}
+        for item in items:
+            cat = item.get("category", "other")
+            groups.setdefault(cat, []).append(item)
+
+        # 统计各竞品动态数量
+        competitor_counts = {}
+        for item in items:
+            comp = item.get("competitor", "未知")
+            competitor_counts[comp] = competitor_counts.get(comp, 0) + 1
+
+        # 重要性统计
+        imp_counts = {"high": 0, "medium": 0, "low": 0}
+        for item in items:
+            imp = item.get("importance", "medium")
+            imp_counts[imp] = imp_counts.get(imp, 0) + 1
+
+        # 构建 HTML
+        html = f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{prefix} - {date_str}</title>
+<style>
+:root {{
+  --bg: #faf8f5;
+  --bg2: #ffffff;
+  --bg3: #f3efe8;
+  --ink: #1a1a2e;
+  --muted: #6b7280;
+  --rule: #e5e0d8;
+  --accent: #2563eb;
+  --accent2: #f59e0b;
+  --tip: #059669;
+  --tip-bg: #ecfdf5;
+  --warn: #dc2626;
+  --warn-bg: #fef2f2;
+  --note-bg: #eff6ff;
+}}
+* {{ margin: 0; padding: 0; box-sizing: border-box; }}
+body {{
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--ink);
+  background: var(--bg);
+}}
+.container {{
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}}
+.hero {{
+  text-align: center;
+  padding: 2.5rem 0 2rem;
+  border-bottom: 2px solid var(--accent);
+  margin-bottom: 2rem;
+}}
+.hero .badge {{
+  display: inline-block;
+  background: var(--note-bg);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.3rem 1rem;
+  border-radius: 100px;
+  margin-bottom: 0.8rem;
+}}
+.hero h1 {{
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}}
+.hero .meta {{
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-top: 0.5rem;
+}}
+.stats {{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}}
+.stat-card {{
+  background: var(--bg2);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+}}
+.stat-card .num {{
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--accent);
+}}
+.stat-card .label {{
+  font-size: 0.82rem;
+  color: var(--muted);
+}}
+.stat-card.high .num {{ color: var(--warn); }}
+.stat-card.medium .num {{ color: var(--accent2); }}
+.stat-card.low .num {{ color: var(--tip); }}
+section {{ margin-bottom: 2rem; }}
+section h2 {{
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}}
+.item-card {{
+  background: var(--bg2);
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--muted);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 0.8rem;
+  transition: box-shadow 0.15s;
+}}
+.item-card:hover {{ box-shadow: 0 2px 8px rgba(0,0,0,0.06); }}
+.item-card.high {{ border-left-color: var(--warn); }}
+.item-card.medium {{ border-left-color: var(--accent2); }}
+.item-card.low {{ border-left-color: var(--tip); }}
+.item-card .item-header {{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}}
+.item-card .competitor {{
+  font-weight: 700;
+  font-size: 1.05rem;
+}}
+.item-card .importance {{
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+  border-radius: 100px;
+}}
+.item-card .importance.high {{ background: var(--warn-bg); color: var(--warn); }}
+.item-card .importance.medium {{ background: #fef3c7; color: #92400e; }}
+.item-card .importance.low {{ background: var(--tip-bg); color: var(--tip); }}
+.item-card .summary {{
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+}}
+.item-card .keywords {{
+  margin-bottom: 0.4rem;
+}}
+.item-card .keyword {{
+  display: inline-block;
+  background: var(--bg3);
+  color: var(--accent);
+  font-size: 0.78rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  margin-right: 0.3rem;
+}}
+.item-card .meta {{
+  font-size: 0.82rem;
+  color: var(--muted);
+}}
+.item-card .meta a {{ color: var(--accent); }}
+.competitor-bar {{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}}
+.competitor-bar .chip {{
+  background: var(--bg3);
+  border-radius: 100px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+}}
+.competitor-bar .chip .count {{
+  color: var(--accent);
+  font-weight: 800;
+}}
+footer {{
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="hero">
+    <span class="badge">{date_str}</span>
+    <h1>{prefix}</h1>
+    <div class="meta">自动采集时间: {time_str}</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="num">{len(items)}</div><div class="label">总动态数</div></div>
+    <div class="stat-card high"><div class="num">{imp_counts['high']}</div><div class="label">高重要性</div></div>
+    <div class="stat-card medium"><div class="num">{imp_counts['medium']}</div><div class="label">中重要性</div></div>
+    <div class="stat-card low"><div class="num">{imp_counts['low']}</div><div class="label">低重要性</div></div>
+  </div>
+
+  <div class="competitor-bar">
+"""
+        for comp, count in sorted(competitor_counts.items(), key=lambda x: -x[1]):
+            html += f'    <span class="chip">{comp} <span class="count">{count}</span></span>\n'
+
+        html += "  </div>\n"
+
+        if not items:
+            html += "  <p>今日暂无竞品动态。</p>\n"
+        else:
+            for cat_code in self.categories:
+                cat_items = groups.get(cat_code, [])
+                if not cat_items:
+                    continue
+                cat_name = self.categories[cat_code]
+                cat_items.sort(key=lambda x: self.IMPORTANCE_ORDER.get(
+                    x.get("importance", "low"), 2))
+
+                html += f'  <section>\n    <h2>{cat_name}</h2>\n'
+                for item in cat_items:
+                    imp = item.get("importance", "medium")
+                    imp_label = {"high": "高", "medium": "中", "low": "低"}.get(imp, "中")
+                    competitor = item.get("competitor", "未知")
+                    summary = item.get("summary", "")
+                    keywords = item.get("keywords", [])
+                    link = item.get("link", "")
+                    source = item.get("source", "")
+                    points = item.get("points")
+
+                    kw_html = " ".join(f'<span class="keyword">{k}</span>' for k in keywords)
+                    source_html = f'来源: {source}'
+                    if points:
+                        source_html += f' | HN 赞数: {points}'
+                    source_html += f' | <a href="{link}" target="_blank">查看原文</a>'
+
+                    html += f"""    <div class="item-card {imp}">
+      <div class="item-header">
+        <span class="competitor">{competitor}</span>
+        <span class="importance {imp}">{imp_label}优先级</span>
+      </div>
+      <div class="summary">{summary}</div>
+      <div class="keywords">{kw_html}</div>
+      <div class="meta">{source_html}</div>
+    </div>
+"""
+                html += "  </section>\n"
+
+        html += f"""  <footer>
+    本报告由竞品情报自动化系统自动生成 | {time_str}
+  </footer>
+</div>
+</body>
+</html>"""
+        return html
+
+    def save_report(self, markdown_content, html_content=None):
+        """保存报告到本地文件（Markdown + HTML）"""
         output_dir = self.config.get("report", "output_dir", default="reports")
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
         date_str = datetime.now().strftime("%Y-%m-%d")
-        filename = f"intel-{date_str}.md"
-        filepath = os.path.join(output_dir, filename)
 
-        with open(filepath, "w", encoding="utf-8") as f:
+        # 保存 Markdown
+        md_filename = f"intel-{date_str}.md"
+        md_filepath = os.path.join(output_dir, md_filename)
+        with open(md_filepath, "w", encoding="utf-8") as f:
             f.write(markdown_content)
+        logger.info(f"Markdown 报告已保存: {md_filepath}")
 
-        logger.info(f"报告已保存: {filepath}")
-        return filepath
+        # 保存 HTML
+        html_filepath = None
+        if html_content:
+            html_filename = f"intel-{date_str}.html"
+            html_filepath = os.path.join(output_dir, html_filename)
+            with open(html_filepath, "w", encoding="utf-8") as f:
+                f.write(html_content)
+            logger.info(f"HTML 报告已保存: {html_filepath}")
 
+        return html_filepath or md_filepath
 
 # ============================================================
 # 第五部分：通知推送器
@@ -684,7 +956,6 @@ class Notifier:
         except Exception as e:
             logger.warning(f"邮件推送失败: {e}")
 
-
 # ============================================================
 # 第六部分：主流程
 # ============================================================
@@ -753,7 +1024,8 @@ def main():
 
     reporter = Reporter(config)
     markdown_report = reporter.generate_markdown(items)
-    filepath = reporter.save_report(markdown_report)
+    html_report = reporter.generate_html(items)
+    filepath = reporter.save_report(markdown_report, html_report)
 
     # 输出到控制台
     print("\n" + "=" * 60)
@@ -776,7 +1048,6 @@ def main():
     print("  ✅ 全部完成！")
     print(f"  报告已保存: {filepath}")
     print("=" * 60)
-
 
 if __name__ == "__main__":
     main()
