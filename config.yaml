@@ -1,0 +1,100 @@
+# ============================================================
+# 竞品情报自动化系统 — 配置文件
+# ============================================================
+# 说明：这个文件定义了你要监控哪些竞品、从哪些渠道采集。
+#       修改下面的内容即可，不需要改代码。
+# ============================================================
+
+# --- 竞品列表 ---
+# name: 竞品名称（显示在报告中）
+# github: GitHub 仓库地址（owner/repo 格式），用于监控 Releases
+# keywords: 在 Hacker News 搜索时使用的关键词
+competitors:
+  - name: "Cursor"
+    github: "getcursor/cursor"
+    keywords: ["cursor editor", "cursor ai"]
+
+  - name: "Claude Code"
+    github: "anthropics/anthropic-sdk-python"
+    keywords: ["claude code", "anthropic coding"]
+
+  - name: "Codex"
+    github: "openai/codex"
+    keywords: ["codex openai", "openai codex"]
+
+  - name: "Trae"
+    github: null  # 没有公开 GitHub 仓库，设为 null
+    keywords: ["trae ide", "trae bytedance"]
+
+  - name: "Qoder"
+    github: null
+    keywords: ["qoder ai", "qoder coding"]
+
+  - name: "CodeBuddy"
+    github: null
+    keywords: ["codebuddy tencent", "codebuddy ai"]
+
+# --- RSSHub 配置 ---
+# 如果你自建了 RSSHub，把 base_url 改成你的地址
+# 如果没有自建，保持默认使用公共实例
+rsshub:
+  base_url: "https://rsshub.app"
+
+# --- Hacker News 配置 ---
+hackernews:
+  enabled: true
+  min_points: 20  # 只保留点赞数超过这个值的帖子
+
+# --- AI 配置 ---
+ai:
+  # 选择 AI 提供商: "gemini" (免费) 或 "openai" (需充值)
+  provider: "gemini"
+  # Gemini 模型（免费层可用）
+  gemini_model: "gemini-2.0-flash"
+  # OpenAI 模型（如切换到 openai，使用这个模型）
+  openai_model: "gpt-4.1-mini"
+  # 每个竞品最多处理多少条最新动态
+  max_items_per_competitor: 3
+
+# --- 报告配置 ---
+report:
+  # 报告标题前缀
+  title_prefix: "AI Coding 竞品情报日报"
+  # 报告输出目录（本地保存路径）
+  output_dir: "reports"
+
+# --- 推送配置 ---
+# 把你不需要的渠道设为 enabled: false 即可
+notifications:
+  slack:
+    enabled: false  # 改成 true 启用
+    # webhook_url 从环境变量 SLACK_WEBHOOK 读取
+
+  feishu:
+    enabled: false  # 改成 true 启用
+    # webhook_url 从环境变量 FEISHU_WEBHOOK 读取
+
+  wechat_work:
+    enabled: false  # 改成 true 启用
+    # webhook_url 从环境变量 WECHAT_WORK_WEBHOOK 读取
+
+  telegram:
+    enabled: false  # 改成 true 启用
+    # bot_token 从环境变量 TELEGRAM_BOT_TOKEN 读取
+    # chat_id 从环境变量 TELEGRAM_CHAT_ID 读取
+
+  email:
+    enabled: false  # 改成 true 启用
+    # 需要配置 Resend API Key (环境变量 RESEND_API_KEY)
+    from_email: "intel@yourdomain.com"
+    to_email: "team@yourdomain.com"
+
+# --- 分类体系 ---
+categories:
+  feature_update: "功能更新"
+  strategy_change: "战略变化"
+  pricing_change: "定价变化"
+  partnership: "合作伙伴"
+  personnel_change: "人事变动"
+  funding: "融资动态"
+  other: "其他"
