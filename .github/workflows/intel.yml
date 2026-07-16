@@ -1,17 +1,12 @@
 name: 竞品情报自动收集
-# ============================================================
-# GitHub Actions 定时工作流配置
-# ============================================================
-# 这个文件放到 GitHub 仓库的 .github/workflows/ 目录下
-# 会每天北京时间 08:00 自动执行
-# ============================================================
 
 on:
   schedule:
-    # cron 表达式：分 时 日 月 周（UTC 时区）
-    # '0 0 * * *' = UTC 00:00 = 北京时间 08:00
     - cron: '0 0 * * *'
-  workflow_dispatch: # 允许在 GitHub 页面手动触发
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   collect-and-report:
@@ -19,6 +14,8 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 安装 Python
         uses: actions/setup-python@v5
@@ -42,6 +39,6 @@ jobs:
         run: |
           git config user.name "Competitive Intel Bot"
           git config user.email "bot@users.noreply.github.com"
-          git add reports/
+          git add reports/ || true
           git commit -m "📊 竞品情报日报 - $(date -u +%Y-%m-%d)" || exit 0
-          git push
+          git push || echo "推送跳过（可能没有新报告需要提交）"
