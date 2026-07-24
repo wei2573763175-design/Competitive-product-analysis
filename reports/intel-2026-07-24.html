@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Coding 竞品情报日报 - 2026-07-24</title>
+<style>
+:root {
+  --bg: #faf8f5;
+  --bg2: #ffffff;
+  --bg3: #f3efe8;
+  --ink: #1a1a2e;
+  --muted: #6b7280;
+  --rule: #e5e0d8;
+  --accent: #2563eb;
+  --accent2: #f59e0b;
+  --tip: #059669;
+  --tip-bg: #ecfdf5;
+  --warn: #dc2626;
+  --warn-bg: #fef2f2;
+  --note-bg: #eff6ff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--ink);
+  background: var(--bg);
+}
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+.hero {
+  text-align: center;
+  padding: 2.5rem 0 2rem;
+  border-bottom: 2px solid var(--accent);
+  margin-bottom: 2rem;
+}
+.hero .badge {
+  display: inline-block;
+  background: var(--note-bg);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.3rem 1rem;
+  border-radius: 100px;
+  margin-bottom: 0.8rem;
+}
+.hero h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.hero .meta {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-top: 0.5rem;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+}
+.stat-card .num {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+.stat-card .label {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.stat-card.high .num { color: var(--warn); }
+.stat-card.medium .num { color: var(--accent2); }
+.stat-card.low .num { color: var(--tip); }
+section { margin-bottom: 2rem; }
+section h2 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+.item-card {
+  background: var(--bg2);
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--muted);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 0.8rem;
+  transition: box-shadow 0.15s;
+}
+.item-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.item-card.high { border-left-color: var(--warn); }
+.item-card.medium { border-left-color: var(--accent2); }
+.item-card.low { border-left-color: var(--tip); }
+.item-card .item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+.item-card .competitor {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.item-card .importance {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+  border-radius: 100px;
+}
+.item-card .importance.high { background: var(--warn-bg); color: var(--warn); }
+.item-card .importance.medium { background: #fef3c7; color: #92400e; }
+.item-card .importance.low { background: var(--tip-bg); color: var(--tip); }
+.item-card .summary {
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+}
+.item-card .keywords {
+  margin-bottom: 0.4rem;
+}
+.item-card .keyword {
+  display: inline-block;
+  background: var(--bg3);
+  color: var(--accent);
+  font-size: 0.78rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  margin-right: 0.3rem;
+}
+.item-card .meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.item-card .meta a { color: var(--accent); }
+.competitor-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.competitor-bar .chip {
+  background: var(--bg3);
+  border-radius: 100px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.competitor-bar .chip .count {
+  color: var(--accent);
+  font-weight: 800;
+}
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="hero">
+    <span class="badge">2026-07-24</span>
+    <h1>AI Coding 竞品情报日报</h1>
+    <div class="meta">自动采集时间: 2026-07-24 08:01</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="num">17</div><div class="label">总动态数</div></div>
+    <div class="stat-card high"><div class="num">0</div><div class="label">高重要性</div></div>
+    <div class="stat-card medium"><div class="num">0</div><div class="label">中重要性</div></div>
+    <div class="stat-card low"><div class="num">17</div><div class="label">低重要性</div></div>
+  </div>
+
+  <div class="competitor-bar">
+    <span class="chip">Claude Code <span class="count">6</span></span>
+    <span class="chip">Codex <span class="count">6</span></span>
+    <span class="chip">Cursor <span class="count">3</span></span>
+    <span class="chip">Trae <span class="count">1</span></span>
+    <span class="chip">Qoder <span class="count">1</span></span>
+  </div>
+  <section>
+    <h2>其他</h2>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Claude Code</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">v0.119.0</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: GitHub | <a href="https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.119.0" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Claude Code</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">v0.118.0</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: GitHub | <a href="https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.118.0" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Claude Code</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">v0.117.1</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: GitHub | <a href="https://github.com/anthropics/anthropic-sdk-python/releases/tag/v0.117.1" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Codex</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">0.146.0-alpha.6</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: GitHub | <a href="https://github.com/openai/codex/releases/tag/rust-v0.146.0-alpha.6" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Codex</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">0.146.0-alpha.5</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: GitHub | <a href="https://github.com/openai/codex/releases/tag/rust-v0.146.0-alpha.5" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Codex</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">0.146.0-alpha.3.1</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: GitHub | <a href="https://github.com/openai/codex/releases/tag/rust-v0.146.0-alpha.3.1" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Cursor</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">Avante.nvim: Use Your Neovim Like Using Cursor AI IDE</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: Hacker News | HN 赞数: 300 | <a href="https://news.ycombinator.com/item?id=41353835" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Cursor</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">Code highlighting extension for Cursor AI used for $500k the</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: Hacker News | HN 赞数: 182 | <a href="https://news.ycombinator.com/item?id=44569619" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Cursor</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">Speed at the cost of quality: Study of use of Cursor AI in o</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: Hacker News | HN 赞数: 148 | <a href="https://news.ycombinator.com/item?id=47401734" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Claude Code</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">Claude Code is steganographically marking requests</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: Hacker News | HN 赞数: 2445 | <a href="https://news.ycombinator.com/item?id=48734373" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Claude Code</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">Claude 3.7 Sonnet and Claude Code</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: Hacker News | HN 赞数: 2127 | <a href="https://news.ycombinator.com/item?id=43163011" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Claude Code</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">Claude Code's source code has been leaked via a map file in </div>
+      <div class="keywords"></div>
+      <div class="meta">来源: Hacker News | HN 赞数: 2095 | <a href="https://news.ycombinator.com/item?id=47584540" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Codex</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">OpenAI Codex CLI: Lightweight coding agent that runs in your</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: Hacker News | HN 赞数: 516 | <a href="https://news.ycombinator.com/item?id=43708025" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Codex</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">OpenAI's Codex sure knows a lot about HN [video]</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: Hacker News | HN 赞数: 374 | <a href="https://news.ycombinator.com/item?id=28191362" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Codex</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">OpenAI Codex</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: Hacker News | HN 赞数: 372 | <a href="https://news.ycombinator.com/item?id=28131745" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Trae</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">Performance and telemetry analysis of Trae IDE, ByteDance's </div>
+      <div class="keywords"></div>
+      <div class="meta">来源: Hacker News | HN 赞数: 954 | <a href="https://news.ycombinator.com/item?id=44703164" target="_blank">查看原文</a></div>
+    </div>
+    <div class="item-card low">
+      <div class="item-header">
+        <span class="competitor">Qoder</span>
+        <span class="importance low">低优先级</span>
+      </div>
+      <div class="summary">Qoder Quest Mode: Task Delegation to AI Agents</div>
+      <div class="keywords"></div>
+      <div class="meta">来源: Hacker News | HN 赞数: 55 | <a href="https://news.ycombinator.com/item?id=44985471" target="_blank">查看原文</a></div>
+    </div>
+  </section>
+  <footer>
+    本报告由竞品情报自动化系统自动生成 | 2026-07-24 08:01
+  </footer>
+</div>
+</body>
+</html>
